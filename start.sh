@@ -17,15 +17,14 @@ php artisan route:cache || true
 php artisan config:cache || true
 php artisan view:cache || true
 
-# Xóa cache phân trang cũ
+# Xóa cache cũ
 rm -rf bootstrap/cache/*.php
 rm -rf storage/framework/views/*
 
-# Chờ DB Railway khởi động
 echo "⏳ Waiting for database to be ready..."
 sleep 10
 
-# Chạy migrate + seed
+echo "📦 Running migrations and seeders..."
 php artisan migrate --force
 php artisan db:seed --class=ProductsTableSeeder --force
 php artisan db:seed --class=ReviewSeeder --force
