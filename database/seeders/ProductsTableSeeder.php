@@ -4,42 +4,34 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 class ProductsTableSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        // 🧠 Lấy danh sách brand & category thật từ DB
+        // ⚠️ Xóa dữ liệu cũ
+        Schema::disableForeignKeyConstraints();
+        DB::table('products')->truncate();
+        Schema::enableForeignKeyConstraints();
+
+        // 🧠 Lấy danh sách brand & category
         $brands = DB::table('brands')->pluck('id')->toArray();
         $categories = DB::table('categories')->pluck('cateid')->toArray();
 
-        // Nếu chưa có dữ liệu thì dừng lại tránh lỗi FK
         if (empty($brands) || empty($categories)) {
-            echo "⚠️ Bảng brands hoặc categories đang trống. Hãy seed trước!\n";
+            echo "⚠️ Bảng brands hoặc categories đang trống!\n";
             return;
         }
 
-        // 🖼 Danh sách ảnh có sẵn trong storage/products
+        // 🖼 Ảnh và mô tả mẫu
         $images = [
-            'airpods_pro2.jpg',
-            'apple_watch.jpg',
-            'bose_qc45.jpg',
-            'dell_xps13.jpg',
-            'galaxy_s24.jpg',
-            'hp_spectre_x360.jpg',
-            'ipad_pro.jpg',
-            'iphone15.jpg',
-            'logitech_mouse.jpg',
-            'macbook_pro.jpg',
-            'mechanical_keyboard.jpg',
-            'rog_phone8.jpg',
-            'sony_headphones.jpg',
+            'airpods_pro2.jpg', 'apple_watch.jpg', 'bose_qc45.jpg', 'dell_xps13.jpg',
+            'galaxy_s24.jpg', 'hp_spectre_x360.jpg', 'ipad_pro.jpg', 'iphone15.jpg',
+            'logitech_mouse.jpg', 'macbook_pro.jpg', 'mechanical_keyboard.jpg',
+            'rog_phone8.jpg', 'sony_headphones.jpg',
         ];
 
-        // 📝 Mô tả ngẫu nhiên
         $descriptions = [
             'Thiết kế tinh tế, hiệu năng mạnh mẽ, pin cực bền.',
             'Sản phẩm chính hãng, bảo hành 12 tháng toàn quốc.',

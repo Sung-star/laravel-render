@@ -10,7 +10,6 @@ class UpdateProductsBrandidSeeder extends Seeder
     public function run(): void
     {
         $productIds = DB::table('products')->pluck('id');
-
         foreach ($productIds as $id) {
             DB::table('products')
                 ->where('id', $id)
