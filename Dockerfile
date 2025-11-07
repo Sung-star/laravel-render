@@ -13,8 +13,9 @@ RUN composer dump-autoload --optimize
 # =========================
 FROM php:8.2-fpm-alpine
 
-# Cài extension cho PostgreSQL
-RUN docker-php-ext-install pdo pdo_pgsql
+# Cài thư viện PostgreSQL và extension
+RUN apk add --no-cache postgresql-dev && \
+    docker-php-ext-install pdo pdo_pgsql
 
 # Thêm tiện ích cơ bản
 RUN apk add --no-cache bash curl
