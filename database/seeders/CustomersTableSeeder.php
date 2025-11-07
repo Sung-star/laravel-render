@@ -20,12 +20,14 @@ class CustomersTableSeeder extends Seeder
             DB::table('customers')->insert([
                 'id' => $i,
                 'fullname' => "Khách hàng $i",
+                'tel' => "0366487029$i", // ✅ đúng tên cột trong migration
                 'email' => "customer$i@gmail.com",
-                'phone' => "0366487029$i",
                 'address' => "Số $i, Quận 1, TP.HCM",
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
         }
+
+        echo "✅ Đã seed thành công bảng customers!\n";
     }
 }
