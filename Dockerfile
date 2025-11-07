@@ -1,29 +1,36 @@
-# ------------------------------
-# ✅ PHP-FPM cho Laravel (Tối ưu cho Railway)
-# ------------------------------
-FROM php:8.2-fpm
-
-# Cài các thư viện cần thiết
-RUN apt-get update && apt-get install -y \
-    git zip unzip libpng-dev libonig-dev libxml2-dev libzip-dev curl libpq-dev \
-    && docker-php-ext-install pdo pdo_mysql pdo_pgsql mbstring exif pcntl bcmath gd zip
-
-# Sao chép mã nguồn
-WORKDIR /var/www/html
+# =========================
+# 1️⃣ Build dependencies
+# =========================
+FROM composer:2 AS vendor
+WORKDIR /app
+COPY composer.json composer.lock ./
+RUN composer install --no-dev --no-interaction --prefer-dist --no-scripts
 COPY . .
+RUN composer dump-autoload --optimize
 
-# Cài composer (bản mới nhất)
-COPY --from=composer:2.6 /usr/bin/composer /usr/bin/composer
+# =========================
+# 2️⃣ Runtime (PHP + PostgreSQL)
+# =========================
+FROM php:8.2-fpm-alpine
 
-# Cài dependencies PHP
-RUN composer install --no-dev --optimize-autoloader
+# Cài extension cho PostgreSQL
+RUN docker-php-ext-install pdo pdo_pgsql
 
-# Phân quyền cho storage
-RUN chown -R www-data:www-data /var/www/html \
-    && chmod -R 755 /var/www/html/storage /var/www/html/bootstrap/cache
+# Thêm tiện ích cơ bản
+RUN apk add --no-cache bash curl
 
-# Mở port cho Railway
-EXPOSE 8000
+WORKDIR /var/www
+COPY --from=vendor /app ./
 
-# Dùng start.sh làm entrypoint
-CMD ["sh", "start.sh"]
+# =========================
+# 3️⃣ Laravel auto setup khi container khởi động
+# =========================
+CMD php artisan key:generate --force && \
+    php artisan migrate --force && \
+    php artisan db:seed --force && \
+    php artisan config:cache && \
+    php artisan route:cache && \
+    php artisan view:cache && \
+    php artisan storage:link && \
+    echo '✅ Laravel khởi động thành công!' && \
+    php-fpm
