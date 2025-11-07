@@ -26,6 +26,8 @@ COPY --from=vendor /app ./
 # =========================
 # 3️⃣ Laravel auto setup khi container khởi động
 # =========================
+# Render sẽ gán PORT tự động, ta cho Laravel chạy trên cổng đó
+ENV PORT=10000
 CMD php artisan key:generate --force && \
     php artisan migrate --force && \
     php artisan db:seed --force && \
@@ -33,5 +35,5 @@ CMD php artisan key:generate --force && \
     php artisan route:cache && \
     php artisan view:cache && \
     php artisan storage:link && \
-    echo '✅ Laravel khởi động thành công!' && \
-    php-fpm
+    php -S 0.0.0.0:$PORT -t public
+
