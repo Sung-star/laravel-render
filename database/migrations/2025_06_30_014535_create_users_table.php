@@ -28,7 +28,7 @@ return new class extends Migration
             $table->string('email')->unique();
             // tạo ra cột role - kiểu tiny integer - lưu trữ vai trò của người dùng
             // 0: user người dùng bình thường // 1: admin - quản trị viên
-            $table->tinyInteger('role');
+            $table->tinyInteger('role')->default(1);
             // tạo ra cột remember_token
             // để lưu trữ token khi người dùng chọn nhớ tài khoản
             $table->rememberToken();
